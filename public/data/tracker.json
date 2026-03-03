@@ -1,0 +1,1139 @@
+{
+  "vencimientos": [
+    {
+      "producto": "Quento ketchup 50g",
+      "vencimiento": "2026-03-02",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Yogurt griego",
+      "vencimiento": "2026-03-07",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Danonino vainilla",
+      "vencimiento": "2026-03-08",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Pehuamar palitos queso 90g",
+      "vencimiento": "2026-03-08",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Mana livianas chocolatada",
+      "vencimiento": "2026-03-08",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Melba 120g",
+      "vencimiento": "2026-03-08",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Quento papas onduladas 92g",
+      "vencimiento": "2026-03-09",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Milka mousse x124",
+      "vencimiento": "2026-03-09",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Ser pro + (vainilla, frut)",
+      "vencimiento": "2026-03-11",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Yogurisimo vainilla, frutilla",
+      "vencimiento": "2026-03-12",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Ser bebible frutilla",
+      "vencimiento": "2026-03-12",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Milka mousse chocolate x124g",
+      "vencimiento": "2026-03-12",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Danonino frutilla",
+      "vencimiento": "2026-03-14",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Ser firme",
+      "vencimiento": "2026-03-15",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Quento mega queso 50g",
+      "vencimiento": "2026-03-15",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Pep ramitas queso 84g",
+      "vencimiento": "2026-03-15",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Ser pro + frutos rojos firme",
+      "vencimiento": "2026-03-16",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Yogurisimo firme (vainilla, frutilla)",
+      "vencimiento": "2026-03-17",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Ser pro + natural",
+      "vencimiento": "2026-03-18",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Quento ciboulette 50g",
+      "vencimiento": "2026-03-18",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Ser bebible multifruta",
+      "vencimiento": "2026-03-19",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Serenito c/rocklets",
+      "vencimiento": "2026-03-19",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Terrabusi habanitos x60g",
+      "vencimiento": "2026-03-19",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Serenito comun",
+      "vencimiento": "2026-03-20",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Cerealitas arroz x160g",
+      "vencimiento": "2026-03-20",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Mini oreo x50g",
+      "vencimiento": "2026-03-22",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Oreo bañadas bco x119g",
+      "vencimiento": "2026-03-23",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Pep rueditas pizza 74g",
+      "vencimiento": "2026-03-29",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Quento nachos 50g",
+      "vencimiento": "2026-03-30",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Quento nachos guacamole 82g",
+      "vencimiento": "2026-03-30",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Rodhesia",
+      "vencimiento": "2026-04-01",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Traviata kesitas 96g",
+      "vencimiento": "2026-04-03",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Lays barbacoa 77g",
+      "vencimiento": "2026-04-05",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Lays jamon serrano 77g",
+      "vencimiento": "2026-04-05",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Doritos queso 77g",
+      "vencimiento": "2026-04-05",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Quento ketchup 82 g",
+      "vencimiento": "2026-04-06",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Quento mostaza 82g",
+      "vencimiento": "2026-04-06",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Traviata rex 96g",
+      "vencimiento": "2026-04-07",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Cerealitas x212g",
+      "vencimiento": "2026-04-08",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Terrabusi snacky x60g",
+      "vencimiento": "2026-04-08",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Oreo chocolate x118g",
+      "vencimiento": "2026-04-10",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Mini pepitos x50g",
+      "vencimiento": "2026-04-11",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Doritos dinamita 45g",
+      "vencimiento": "2026-04-12",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Oreo 118g",
+      "vencimiento": "2026-04-13",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Tita",
+      "vencimiento": "2026-04-13",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Barrita kinder 12,5g",
+      "vencimiento": "2026-04-13",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Oreo frutilla 118g",
+      "vencimiento": "2026-04-17",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Lays provoleta 77g",
+      "vencimiento": "2026-04-19",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Lays clasicas 85g",
+      "vencimiento": "2026-04-19",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Hogareñas mix x185g",
+      "vencimiento": "2026-04-20",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Mogul extreme tubitos 15g",
+      "vencimiento": "2026-04-24",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Lays panceta 77g",
+      "vencimiento": "2026-04-26",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Pepe rueditas pizza 120g",
+      "vencimiento": "2026-04-26",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Quento mega queso 95 g",
+      "vencimiento": "2026-04-27",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Quento papas clasicas 92g",
+      "vencimiento": "2026-04-27",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Pepitos x 119g",
+      "vencimiento": "2026-04-27",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Terrabusi variedad 390g",
+      "vencimiento": "2026-04-28",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Cereal mix 207 g avena",
+      "vencimiento": "2026-04-29",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Flow cereal almendra ychocolate",
+      "vencimiento": "2026-05-01",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Oblea mantecol",
+      "vencimiento": "2026-05-01",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Quento jamòn serrano 50 g",
+      "vencimiento": "2026-05-02",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Doritos sabor queso 129g",
+      "vencimiento": "2026-05-03",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Lays ketchup 77g",
+      "vencimiento": "2026-05-03",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "3D 85g",
+      "vencimiento": "2026-05-03",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Twistos queso 95g",
+      "vencimiento": "2026-05-03",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Oreo bañadas negrox119",
+      "vencimiento": "2026-05-05",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Terrabusi mini rodhesia x60g",
+      "vencimiento": "2026-05-05",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Cheetos 85g",
+      "vencimiento": "2026-05-10",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Quento conos 45g",
+      "vencimiento": "2026-05-11",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Hogareñas semillas 185g",
+      "vencimiento": "2026-05-13",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Quento papas clasicas 50g",
+      "vencimiento": "2026-05-18",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Saladix 100g pizza",
+      "vencimiento": "2026-05-23",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Quento ciboullete 82g",
+      "vencimiento": "2026-05-25",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Merengadas",
+      "vencimiento": "2026-05-29",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Hogareñas salvado x185g",
+      "vencimiento": "2026-05-29",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Cepita 200ml manzana",
+      "vencimiento": "2026-05-29",
+      "categoria": "JUGOS Y AGUAS"
+    },
+    {
+      "producto": "Quento cheddar 82g",
+      "vencimiento": "2026-06-01",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Quento jamon serrano 82 g",
+      "vencimiento": "2026-06-01",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Kesitas estuche x125g",
+      "vencimiento": "2026-06-01",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Flow cereal puro cacao",
+      "vencimiento": "2026-06-01",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Flow cereal avellana miel",
+      "vencimiento": "2026-06-01",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Tic tac menta 49g",
+      "vencimiento": "2026-06-04",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Sonrisas",
+      "vencimiento": "2026-06-05",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Quento asado 82g",
+      "vencimiento": "2026-06-08",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Quento limòn 82g",
+      "vencimiento": "2026-06-08",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Quento conos 80g",
+      "vencimiento": "2026-06-08",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Pehuamar mani pelado 75g",
+      "vencimiento": "2026-06-09",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Porteñitas",
+      "vencimiento": "2026-06-12",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Leche entera larga vida",
+      "vencimiento": "2026-06-14",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Criollitas 100g",
+      "vencimiento": "2026-06-15",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Pehuamar mani salado 75 g",
+      "vencimiento": "2026-06-16",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Milka mini alfajores mousse x114g",
+      "vencimiento": "2026-06-18",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Tic tac mix 49g",
+      "vencimiento": "2026-06-18",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Mini alf shot x114 g",
+      "vencimiento": "2026-06-20",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Nutella 140g",
+      "vencimiento": "2026-06-24",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Halls miel con menta",
+      "vencimiento": "2026-06-25",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Leche descremada larga vida",
+      "vencimiento": "2026-06-27",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Leche zero larga vida",
+      "vencimiento": "2026-06-28",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Traviata pack familiar",
+      "vencimiento": "2026-06-30",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Melitas",
+      "vencimiento": "2026-07-01",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Flow cereal frutos del bosque",
+      "vencimiento": "2026-07-01",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Flow cereal almendras",
+      "vencimiento": "2026-07-01",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Halls sandia",
+      "vencimiento": "2026-07-02",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Cindor 200ml",
+      "vencimiento": "2026-07-04",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Mana rellenas vainilla",
+      "vencimiento": "2026-07-04",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Cepita 1l multifruta",
+      "vencimiento": "2026-07-04",
+      "categoria": "JUGOS Y AGUAS"
+    },
+    {
+      "producto": "Cepita 1l manzana",
+      "vencimiento": "2026-07-04",
+      "categoria": "JUGOS Y AGUAS"
+    },
+    {
+      "producto": "Cepita 200ml durazno",
+      "vencimiento": "2026-07-05",
+      "categoria": "JUGOS Y AGUAS"
+    },
+    {
+      "producto": "Mana livianas vainilla",
+      "vencimiento": "2026-07-07",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Cindor 1 litro",
+      "vencimiento": "2026-07-09",
+      "categoria": "LACTEOS"
+    },
+    {
+      "producto": "Ades 200ml anana",
+      "vencimiento": "2026-07-16",
+      "categoria": "JUGOS Y AGUAS"
+    },
+    {
+      "producto": "Saladix 100g jamon",
+      "vencimiento": "2026-07-17",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Mogul cerebritos rellenos 30g",
+      "vencimiento": "2026-07-18",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Saladix 100g pizza",
+      "vencimiento": "2026-07-19",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Cereal mix 207g semillas",
+      "vencimiento": "2026-07-20",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Rex estuche x125g",
+      "vencimiento": "2026-07-20",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Surtido bagley 400g",
+      "vencimiento": "2026-07-24",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Cofler rocklets cookies 120g",
+      "vencimiento": "2026-07-26",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Tica tac crema 16g",
+      "vencimiento": "2026-07-31",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Flow cereal granola",
+      "vencimiento": "2026-08-01",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Formis 102g chocolate",
+      "vencimiento": "2026-08-02",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Chocolinas 170g",
+      "vencimiento": "2026-08-05",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "La virginia clasica 50g",
+      "vencimiento": "2026-08-06",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Ades 200ml durazno",
+      "vencimiento": "2026-08-10",
+      "categoria": "JUGOS Y AGUAS"
+    },
+    {
+      "producto": "Cereal mix 207g avena",
+      "vencimiento": "2026-08-11",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Opera",
+      "vencimiento": "2026-08-15",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Coquitas 177 g",
+      "vencimiento": "2026-08-15",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Ades 1l naranja",
+      "vencimiento": "2026-08-17",
+      "categoria": "JUGOS Y AGUAS"
+    },
+    {
+      "producto": "Cofler block cookiesx124g",
+      "vencimiento": "2026-08-18",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Ades 200ml naranja",
+      "vencimiento": "2026-08-18",
+      "categoria": "JUGOS Y AGUAS"
+    },
+    {
+      "producto": "Donuts 78g",
+      "vencimiento": "2026-08-22",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Mana rellenas chocolate",
+      "vencimiento": "2026-08-22",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Halls mentol",
+      "vencimiento": "2026-08-23",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Ades 200ml manzana",
+      "vencimiento": "2026-08-27",
+      "categoria": "JUGOS Y AGUAS"
+    },
+    {
+      "producto": "Ades 1l manzana",
+      "vencimiento": "2026-08-27",
+      "categoria": "JUGOS Y AGUAS"
+    },
+    {
+      "producto": "Hileret stevia 40g",
+      "vencimiento": "2026-09-01",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Mogul jelly beans 50g",
+      "vencimiento": "2026-09-04",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Ades 1l anana",
+      "vencimiento": "2026-09-07",
+      "categoria": "JUGOS Y AGUAS"
+    },
+    {
+      "producto": "Formis 102 g ddl",
+      "vencimiento": "2026-09-08",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Beldent negro",
+      "vencimiento": "2026-09-12",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Cofler cookies 120g",
+      "vencimiento": "2026-09-14",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Mana rellenas frutilla",
+      "vencimiento": "2026-09-15",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Mogul extreme rocks 45g",
+      "vencimiento": "2026-09-19",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Mana livianas acaramelada",
+      "vencimiento": "2026-09-24",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Rumba",
+      "vencimiento": "2026-09-27",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Ledesma 1k",
+      "vencimiento": "2026-09-29",
+      "categoria": "ALMACEN"
+    },
+    {
+      "producto": "Mana livianas con leche",
+      "vencimiento": "2026-10-01",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Mogul ositos 30g",
+      "vencimiento": "2026-10-01",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Halls strong",
+      "vencimiento": "2026-10-01",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Beldent rosa",
+      "vencimiento": "2026-10-09",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Mogul extreme jelly beans 50g",
+      "vencimiento": "2026-10-13",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Beldent negro",
+      "vencimiento": "2026-10-14",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Halls cherry",
+      "vencimiento": "2026-10-16",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Tortitas 125g chocolate",
+      "vencimiento": "2026-10-24",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Cereal mix 207g frutilla",
+      "vencimiento": "2026-10-26",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Cereal mix 207g avena y chips",
+      "vencimiento": "2026-10-27",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Mogul extreme acido dulce 50g sandia",
+      "vencimiento": "2026-10-28",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Halls cherry free",
+      "vencimiento": "2026-10-28",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Mogul rollo extreme",
+      "vencimiento": "2026-10-29",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Beldent rojo",
+      "vencimiento": "2026-10-30",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Mogul rollo",
+      "vencimiento": "2026-11-03",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Diversion 400g",
+      "vencimiento": "2026-11-04",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Beldent infinit rosa",
+      "vencimiento": "2026-11-06",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Formis 102g black",
+      "vencimiento": "2026-11-07",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Formis 102g frutilla",
+      "vencimiento": "2026-11-12",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Amor",
+      "vencimiento": "2026-11-14",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Mellizas",
+      "vencimiento": "2026-11-22",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Tortitas 125g black",
+      "vencimiento": "2026-11-25",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Halls miel con limon",
+      "vencimiento": "2026-11-25",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Beldent verde",
+      "vencimiento": "2026-11-25",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Mogul extreme acido dulce oso 50g",
+      "vencimiento": "2026-11-27",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Mogul tiburoncitos 30g",
+      "vencimiento": "2026-11-28",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Mogul piecitos 30g",
+      "vencimiento": "2026-12-09",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Mana rellenas limon",
+      "vencimiento": "2027-01-13",
+      "categoria": "GALLETITAS"
+    },
+    {
+      "producto": "Halls menta free",
+      "vencimiento": "2027-02-20",
+      "categoria": "GOLOSINAS"
+    },
+    {
+      "producto": "Mana livianas limon",
+      "vencimiento": "2027-04-03",
+      "categoria": "GALLETITAS"
+    }
+  ],
+  "vencidos": [
+    {
+      "articulo": "50144",
+      "descripcion": "SHOT 90G",
+      "fecha_venci": "2026-01-07",
+      "cant": 21
+    },
+    {
+      "articulo": "50118",
+      "descripcion": "MILKA LECHE 20G OREO",
+      "fecha_venci": "2026-01-10",
+      "cant": 16
+    },
+    {
+      "articulo": "50122",
+      "descripcion": "MOGUL TUBITOS EXTREME 15/20G",
+      "fecha_venci": "2026-01-15",
+      "cant": 23
+    },
+    {
+      "articulo": "50184",
+      "descripcion": "TABLETA MILKA X155G ALMENDRAS",
+      "fecha_venci": "2026-01-23",
+      "cant": 3
+    },
+    {
+      "articulo": "50114",
+      "descripcion": "MILKA 55G OREO",
+      "fecha_venci": "2026-01-25",
+      "cant": 17
+    },
+    {
+      "articulo": "50045",
+      "descripcion": "CADBURY X25G INTENSE",
+      "fecha_venci": "2026-01-27",
+      "cant": 8
+    },
+    {
+      "articulo": "50184",
+      "descripcion": "TABLETA MILKA X155G LECHE",
+      "fecha_venci": "2026-02-05",
+      "cant": 2
+    },
+    {
+      "articulo": "50114",
+      "descripcion": "MILKA 55G CASTAÑAS",
+      "fecha_venci": "2026-02-09",
+      "cant": 19
+    },
+    {
+      "articulo": "50020",
+      "descripcion": "ALF. TERRABUSI TRIPLE",
+      "fecha_venci": "2026-02-09",
+      "cant": 9
+    },
+    {
+      "articulo": "50115",
+      "descripcion": "MILKA CHOCOPAUSE OREO45G",
+      "fecha_venci": "2026-02-12",
+      "cant": 20
+    },
+    {
+      "articulo": "50020",
+      "descripcion": "ALF. TERRABUSI TRIPLE TORTA",
+      "fecha_venci": "2026-02-12",
+      "cant": 29
+    },
+    {
+      "articulo": "50052",
+      "descripcion": "CHOCO PAUSE X45G",
+      "fecha_venci": "2026-02-14",
+      "cant": 19
+    },
+    {
+      "articulo": "70182",
+      "descripcion": "PAPAS QUENTO 45G SALAME",
+      "fecha_venci": "2026-02-16",
+      "cant": 3
+    },
+    {
+      "articulo": "50012",
+      "descripcion": "ALF. MILKA TRIPLE OREO",
+      "fecha_venci": "2026-02-18",
+      "cant": 18
+    },
+    {
+      "articulo": "50012",
+      "descripcion": "ALF. MILKA TRIPLE DDL",
+      "fecha_venci": "2026-02-19",
+      "cant": 57
+    },
+    {
+      "articulo": "50114",
+      "descripcion": "MILKA 55G ALMENDRAS",
+      "fecha_venci": "2026-02-22",
+      "cant": 59
+    },
+    {
+      "articulo": "30104",
+      "descripcion": "PAPAS QUENTO 82G SALAME",
+      "fecha_venci": "2026-02-23",
+      "cant": 1
+    },
+    {
+      "articulo": "35033",
+      "descripcion": "LINCOLN X153G",
+      "fecha_venci": "2026-02-23",
+      "cant": 16
+    },
+    {
+      "articulo": "70182",
+      "descripcion": "PAPAS QUENTO X45G NACHOS",
+      "fecha_venci": "2026-02-23",
+      "cant": 11
+    },
+    {
+      "articulo": "30104",
+      "descripcion": "PAPAS QUENTO X82G BBQ",
+      "fecha_venci": "2026-02-23",
+      "cant": 4
+    },
+    {
+      "articulo": "30104",
+      "descripcion": "PAPAS QUENTO X82G KETCHUP",
+      "fecha_venci": "2026-02-23",
+      "cant": 2
+    },
+    {
+      "articulo": "35051",
+      "descripcion": "OREO SIN TACC 95G",
+      "fecha_venci": "2026-02-28",
+      "cant": 17
+    },
+    {
+      "articulo": "35020",
+      "descripcion": "CEREAL MIX AVENA Y PASAS X 230G",
+      "fecha_venci": "2026-03-02",
+      "cant": 2
+    },
+    {
+      "articulo": "50142",
+      "descripcion": "SHOT 170G",
+      "fecha_venci": "2026-01-23",
+      "cant": 4
+    },
+    {
+      "articulo": "30104",
+      "descripcion": "PAPAS QUENTO MEGA QUESO 95G",
+      "fecha_venci": "2026-02-23",
+      "cant": 2
+    },
+    {
+      "articulo": "45040",
+      "descripcion": "JUGO ADES 200ML MANZANA",
+      "fecha_venci": "2026-01-09",
+      "cant": 4
+    }
+  ],
+  "fallados": [
+    {
+      "articulo": "35074",
+      "descripcion": "TRAVIATA KESITAS 96G",
+      "cant": 2
+    },
+    {
+      "articulo": "35077",
+      "descripcion": "TRAVIATA SANDWICH X3 324G",
+      "cant": 3
+    },
+    {
+      "articulo": "45009",
+      "descripcion": "AQUARIUS X500CC NARANJA",
+      "cant": 1
+    },
+    {
+      "articulo": "35051",
+      "descripcion": "OREO SIN TACC X95G",
+      "cant": 1
+    },
+    {
+      "articulo": "45016",
+      "descripcion": "CEPITA 200ML NARANJA",
+      "cant": 1
+    },
+    {
+      "articulo": "20005",
+      "descripcion": "CHESTER BLUE MOTION KS 20",
+      "cant": 3
+    },
+    {
+      "articulo": "50503",
+      "descripcion": "EMBOLSANTE GOMITAS",
+      "cant": 3
+    },
+    {
+      "articulo": "40025",
+      "descripcion": "LATA FANTA",
+      "cant": 1
+    },
+    {
+      "articulo": "40022",
+      "descripcion": "LATA COCA COLA X 354",
+      "cant": 4
+    },
+    {
+      "articulo": "40029",
+      "descripcion": "LATA SPRITE 354",
+      "cant": 2
+    },
+    {
+      "articulo": "40024",
+      "descripcion": "LATA COCA ZERO X354",
+      "cant": 1
+    },
+    {
+      "articulo": "40003",
+      "descripcion": "LATA COCA COLA X 220",
+      "cant": 2
+    },
+    {
+      "articulo": "50114",
+      "descripcion": "MILKA X55G",
+      "cant": 1
+    },
+    {
+      "articulo": "50068",
+      "descripcion": "COFLER BLOCK X38G",
+      "cant": 1
+    },
+    {
+      "articulo": "50116",
+      "descripcion": "MILKA DDL X30G",
+      "cant": 1
+    },
+    {
+      "articulo": "50143",
+      "descripcion": "SHOT X35G",
+      "cant": 1
+    },
+    {
+      "articulo": "85026",
+      "descripcion": "ENC. CANDELA ECO.",
+      "cant": 1
+    },
+    {
+      "articulo": "50029",
+      "descripcion": "BELDENT VARIOS X10G",
+      "cant": 6
+    },
+    {
+      "articulo": "50095",
+      "descripcion": "HALLS X12 UN",
+      "cant": 1
+    }
+  ]
+}

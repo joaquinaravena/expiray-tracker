@@ -1,6 +1,24 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
+export type Vencimiento = {
+  producto: string
+  vencimiento: string
+  categoria: string
+}
+export type Vencido = {
+  articulo: string
+  descripcion: string
+  fecha_venci: string
+  cant: number
+}
+export type Fallado = { articulo: string; descripcion: string; cant: number }
+export type TrackerData = {
+  vencimientos: Vencimiento[]
+  vencidos: Vencido[]
+  fallados: Fallado[]
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
