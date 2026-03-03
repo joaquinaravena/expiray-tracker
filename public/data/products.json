@@ -1,0 +1,5 @@
+[
+  { "name": "Leche", "expiry_date": "2025-03-10" },
+  { "name": "Yogurt", "expiry_date": "2025-03-05" },
+  { "name": "Queso", "expiry_date": "2025-03-15" }
+]
