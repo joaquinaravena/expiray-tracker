@@ -1,6 +1,14 @@
 import { NextRequest } from "next/server";
 import * as XLSX from "xlsx";
 import type { TrackerData, Vencimiento, Vencido, Fallado } from "@/lib/utils";
+import {
+  createVencimiento,
+  createVencido,
+  createFallado,
+  getAllVencimientos,
+  getAllVencidos,
+  getAllFallados,
+} from "@/lib/queries";
 
 const LOG_PREFIX = "[import]";
 
@@ -154,15 +162,17 @@ export async function POST(request: NextRequest) {
     if (vencimientosStart >= 0) {
       const end = nextAfter(vencimientosStart);
       const colProducto = findHeaderCol(headerRow, vencimientosStart, end, ["PRODUCTO"]);
+      const colArticulo = findHeaderCol(headerRow, vencimientosStart, end, ["ARTICULO", "ARTÍCULO"]);
       const colVencimiento = findHeaderCol(headerRow, vencimientosStart, end, ["VENCIMIENTO"]);
       const colCategoria = findHeaderCol(headerRow, vencimientosStart, end, ["CATEGORIA", "CATEGORÍA"]);
       for (let r = dataStartRow; r < rawRows.length; r++) {
         const row = rawRows[r] as unknown[] | undefined;
         if (!row) continue;
         const producto = colProducto >= 0 ? str(row[colProducto]) : "";
+        const articulo = colArticulo >= 0 ? str(row[colArticulo]) : "";
         const vencimiento = colVencimiento >= 0 ? toYYYYMMDD(row[colVencimiento]) : null;
         const categoria = colCategoria >= 0 ? str(row[colCategoria]) : "";
-        const empty = !producto && !vencimiento && !categoria;
+        const empty = !producto && !articulo && !vencimiento && !categoria;
         if (empty) continue;
         if (!producto) {
           warnings.push(`VENCIMIENTOS fila ${r + 1}: producto vacío, se omite.`);
@@ -172,7 +182,7 @@ export async function POST(request: NextRequest) {
           warnings.push(`VENCIMIENTOS fila ${r + 1}: fecha inválida o faltante.`);
           continue;
         }
-        vencimientos.push({ producto, vencimiento, categoria });
+        vencimientos.push({ producto, articulo, vencimiento, categoria });
       }
     }
 
@@ -193,7 +203,7 @@ export async function POST(request: NextRequest) {
         if (empty) continue;
         vencidos.push({
           articulo,
-          descripcion,
+          nombre: descripcion,
           fecha_venci: fecha_venci || "",
           cant,
         });
@@ -213,19 +223,48 @@ export async function POST(request: NextRequest) {
         const cant = colCant >= 0 ? num(row[colCant]) : 0;
         const empty = !articulo && !descripcion && cant === 0;
         if (empty) continue;
-        fallados.push({ articulo, descripcion, cant });
+        fallados.push({ articulo, nombre: descripcion, cant });
       }
     }
 
-    const data: TrackerData = { vencimientos, vencidos, fallados };
+    // Persist to DB: find-or-create product by name, then insert each row
+    for (const row of vencimientos) {
+      await createVencimiento({
+        productName: row.producto,
+        articulo: row.articulo || null,
+        expiry_date: row.vencimiento,
+        category: row.categoria || null,
+      });
+    }
+    for (const row of vencidos) {
+      await createVencido({
+        productName: row.nombre || row.articulo,
+        articulo: row.articulo || null,
+        expiry_date: row.fecha_venci || null,
+        stock: row.cant,
+      });
+    }
+    for (const row of fallados) {
+      await createFallado({
+        productName: row.nombre || row.articulo,
+        articulo: row.articulo || null,
+        stock: row.cant,
+      });
+    }
+
+    const data: TrackerData = {
+      vencimientos: await getAllVencimientos(),
+      vencidos: await getAllVencidos(),
+      fallados: await getAllFallados(),
+    };
     console.log(
       LOG_PREFIX,
       "Success. vencimientos:",
-      vencimientos.length,
+      data.vencimientos.length,
       "vencidos:",
-      vencidos.length,
+      data.vencidos.length,
       "fallados:",
-      fallados.length,
+      data.fallados.length,
       "warnings:",
       warnings.length
     );

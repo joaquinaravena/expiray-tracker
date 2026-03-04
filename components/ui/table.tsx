@@ -78,7 +78,9 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   )
 }
 
-function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+function TableCell({ className, children, ...props }: React.ComponentProps<"td">) {
+  const safeChildren =
+    typeof children === "number" && Number.isNaN(children) ? "" : children
   return (
     <td
       data-slot="table-cell"
@@ -87,7 +89,9 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
         className
       )}
       {...props}
-    />
+    >
+      {safeChildren}
+    </td>
   )
 }
 

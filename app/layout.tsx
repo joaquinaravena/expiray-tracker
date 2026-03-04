@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Expiry Tracker Static",
-  description: "Seguimiento de vencimientos sin base de datos",
+  title: "Vencimientos",
+  description: "Seguimiento de vencimientos, vencidos y fallados",
 };
 
 export default function RootLayout({
