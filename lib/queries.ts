@@ -47,6 +47,13 @@ export async function updateProductName(productId: string, name: string): Promis
   await sql`UPDATE products SET name = ${trimmed} WHERE id = ${productId}`;
 }
 
+export async function getProductById(id: string): Promise<ProductRow | null> {
+  const rows = await sql`
+    SELECT id, name, articulo, created_at FROM products WHERE id = ${id} LIMIT 1
+  `;
+  return queryOne(rows as ProductRow[]);
+}
+
 export async function searchProducts(q: string, limit = 20): Promise<ProductRow[]> {
   const raw = String(q).trim();
   if (!raw) return [];
@@ -120,8 +127,18 @@ export async function createVencimiento(args: {
   articulo?: string | null;
   expiry_date: string;
   category?: string | null;
+  productId?: string | null;
 }): Promise<Vencimiento> {
-  const product = await findOrCreateProductByName(args.productName, args.articulo);
+  let product: ProductRow;
+  if (args.productId?.trim()) {
+    const existing = await getProductById(args.productId.trim());
+    if (!existing) throw new Error("Product not found");
+    await updateProductName(existing.id, args.productName.trim());
+    await updateProductArticulo(existing.id, args.articulo != null ? String(args.articulo).trim() || null : null);
+    product = { ...existing, name: args.productName.trim(), articulo: args.articulo != null ? String(args.articulo).trim() || null : null };
+  } else {
+    product = await findOrCreateProductByName(args.productName, args.articulo);
+  }
   const inserted = await sql`
     INSERT INTO vencimientos (product_id, expiry_date, category)
     VALUES (${product.id}, ${args.expiry_date}, ${args.category ?? null})
@@ -190,8 +207,18 @@ export async function createVencido(args: {
   articulo?: string | null;
   expiry_date?: string | null;
   stock?: number;
+  productId?: string | null;
 }): Promise<Vencido> {
-  const product = await findOrCreateProductByName(args.productName, args.articulo);
+  let product: ProductRow;
+  if (args.productId?.trim()) {
+    const existing = await getProductById(args.productId.trim());
+    if (!existing) throw new Error("Product not found");
+    await updateProductName(existing.id, args.productName.trim());
+    await updateProductArticulo(existing.id, args.articulo != null ? String(args.articulo).trim() || null : null);
+    product = { ...existing, name: args.productName.trim(), articulo: args.articulo != null ? String(args.articulo).trim() || null : null };
+  } else {
+    product = await findOrCreateProductByName(args.productName, args.articulo);
+  }
   const stock = args.stock ?? 0;
   const inserted = await sql`
     INSERT INTO vencidos (product_id, expiry_date, stock)
@@ -259,8 +286,18 @@ export async function createFallado(args: {
   productName: string;
   articulo?: string | null;
   stock?: number;
+  productId?: string | null;
 }): Promise<Fallado> {
-  const product = await findOrCreateProductByName(args.productName, args.articulo);
+  let product: ProductRow;
+  if (args.productId?.trim()) {
+    const existing = await getProductById(args.productId.trim());
+    if (!existing) throw new Error("Product not found");
+    await updateProductName(existing.id, args.productName.trim());
+    await updateProductArticulo(existing.id, args.articulo != null ? String(args.articulo).trim() || null : null);
+    product = { ...existing, name: args.productName.trim(), articulo: args.articulo != null ? String(args.articulo).trim() || null : null };
+  } else {
+    product = await findOrCreateProductByName(args.productName, args.articulo);
+  }
   const stock = args.stock ?? 0;
   const inserted = await sql`
     INSERT INTO fallados (product_id, stock)

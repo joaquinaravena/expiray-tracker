@@ -14,11 +14,12 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { productName, articulo, expiry_date, category } = body as {
+    const { productName, articulo, expiry_date, category, productId } = body as {
       productName: string;
       articulo?: string | null;
       expiry_date: string;
       category?: string | null;
+      productId?: string | null;
     };
     if (!productName?.trim() || !expiry_date) {
       return NextResponse.json(
@@ -31,6 +32,7 @@ export async function POST(request: NextRequest) {
       articulo: articulo != null ? String(articulo).trim() || null : null,
       expiry_date,
       category: category ?? null,
+      productId: productId?.trim() || undefined,
     });
     return NextResponse.json(row, { status: 201 });
   } catch (err) {

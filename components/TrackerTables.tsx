@@ -32,6 +32,8 @@ export function TrackerTables({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogKind, setDialogKind] = useState<TableKind>("vencimientos");
   const [editingId, setEditingId] = useState<string | null>(null);
+  /** When adding a vencimiento/vencido/fallado to a product that has none, we pass this so the backend updates that product instead of creating a new one. */
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   // Form state (shared for create/edit)
@@ -68,9 +70,10 @@ export function TrackerTables({
   const [productSearchQ, setProductSearchQ] = useState("");
   const [productSearchResults, setProductSearchResults] = useState<{ id: string; name: string; articulo?: string | null }[]>([]);
 
-  const openCreate = (kind: TableKind, preselectedProduct?: { name: string; articulo?: string | null }) => {
+  const openCreate = (kind: TableKind, preselectedProduct?: { name: string; articulo?: string | null; productId?: string }) => {
     setDialogKind(kind);
     setEditingId(null);
+    setEditingProductId(preselectedProduct?.productId ?? null);
     setFormProducto(preselectedProduct?.name ?? "");
     setFormArticulo(preselectedProduct?.articulo ?? "");
     setFormVencimiento("");
@@ -83,7 +86,9 @@ export function TrackerTables({
 
   const openEdit = (kind: TableKind, row: Vencimiento | Vencido | Fallado) => {
     setDialogKind(kind);
-    setEditingId(row.id ?? null);
+    const rowId = row.id ?? null;
+    setEditingId(rowId);
+    setEditingProductId(rowId ? null : (row.product_id ?? null));
     if (kind === "vencimientos") {
       const r = row as Vencimiento;
       setFormProducto(r.producto);
@@ -145,6 +150,7 @@ export function TrackerTables({
               articulo: formArticulo.trim() || null,
               expiry_date: formVencimiento,
               category: formCategoria || null,
+              productId: editingProductId || undefined,
             }),
           });
           if (!res.ok) throw new Error("Error al crear");
@@ -171,6 +177,7 @@ export function TrackerTables({
               articulo: formArticulo.trim() || null,
               expiry_date: formVencimiento || null,
               stock: formCant,
+              productId: editingProductId || undefined,
             }),
           });
           if (!res.ok) throw new Error("Error al crear");
@@ -195,6 +202,7 @@ export function TrackerTables({
               productName: formProducto.trim(),
               articulo: formArticulo.trim() || null,
               stock: formCant,
+              productId: editingProductId || undefined,
             }),
           });
           if (!res.ok) throw new Error("Error al crear");
@@ -499,6 +507,7 @@ export function TrackerTables({
                       size="sm"
                       variant="secondary"
                       onClick={() => {
+                        setEditingProductId(p.id);
                         setFormProducto(p.name);
                         setFormArticulo(p.articulo ?? "");
                         setProductSearchQ("");
@@ -516,6 +525,7 @@ export function TrackerTables({
                 variant="ghost"
                 className="h-auto py-1 text-muted-foreground"
                 onClick={() => {
+                  setEditingProductId(null);
                   setFormProducto("");
                   setFormArticulo("");
                   setProductSearchQ("");
