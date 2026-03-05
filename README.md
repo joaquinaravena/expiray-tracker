@@ -77,7 +77,7 @@ El cron es un `GET /api/cron`. Puedes dispararlo a mano sin cambiar el timer:
    - `TO_EMAIL`
    - (Opcional) `CRON_SECRET` (y configúralo también en la ruta `/api/cron` si la proteges con este secreto).
    - (Opcional) `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY` para notificaciones push (generar con `npx web-push generate-vapid-keys`).
-3. El **cron** está definido en `vercel.json`: se ejecuta a las **09:00 UTC** y llama a `GET /api/cron`. Lee `public/data/tracker.json`, filtra ítems de `vencimientos` que vencen en 3 días o menos, y envía un email por cada uno vía Resend.
+3. El **cron** está definido en `vercel.json`: se ejecuta a las **07:00 UTC** y llama a `GET /api/cron`. Lee `public/data/tracker.json`, filtra ítems de `vencimientos` que vencen en 3 días o menos, y envía un email por cada uno vía Resend.
 
 ## Sin base de datos ni auth
 
