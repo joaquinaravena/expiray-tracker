@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { formatExpiryDate, getDaysRemaining, toDateOnly, cn } from "@/lib/utils";
@@ -42,6 +43,9 @@ export function TrackerTables({
   const [formVencimiento, setFormVencimiento] = useState("");
   const [formCategoria, setFormCategoria] = useState("");
   const [formCant, setFormCant] = useState(0);
+
+  // Delete confirmation dialog
+  const [deleteConfirm, setDeleteConfirm] = useState<{ kind: TableKind; id: string } | null>(null);
 
   // Search filter per tab
   const [searchVencimientos, setSearchVencimientos] = useState("");
@@ -218,16 +222,17 @@ export function TrackerTables({
     }
   };
 
-  const handleDelete = async (kind: TableKind, id: string) => {
-    if (!confirm("¿Eliminar este registro?")) return;
-    try {
-      const res = await fetch(`/api/${kind}/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Error al eliminar");
-      toast.success("Eliminado");
-      onDataChange?.();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Error");
-    }
+  const handleDeleteClick = (kind: TableKind, id: string) => {
+    setDeleteConfirm({ kind, id });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirm) return;
+    const { kind, id } = deleteConfirm;
+    const res = await fetch(`/api/${kind}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error("Error al eliminar");
+    toast.success("Eliminado");
+    onDataChange?.();
   };
 
   const dialogTitle =
@@ -245,6 +250,16 @@ export function TrackerTables({
 
   return (
     <>
+      <ConfirmDialog
+        open={!!deleteConfirm}
+        onOpenChange={(open) => !open && setDeleteConfirm(null)}
+        title="Eliminar registro"
+        description="¿Eliminar este registro? Esta acción no se puede deshacer."
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        variant="destructive"
+        onConfirm={handleDeleteConfirm}
+      />
       <Tabs defaultValue="vencimientos" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="vencimientos">Vencimientos</TabsTrigger>
@@ -316,7 +331,7 @@ export function TrackerTables({
                               <Button
                                 variant="ghost"
                                 size="icon-sm"
-                                onClick={() => handleDelete("vencimientos", row.id!)}
+                                onClick={() => handleDeleteClick("vencimientos", row.id!)}
                                 className="text-destructive hover:text-destructive"
                                 aria-label="Eliminar"
                               >
@@ -388,7 +403,7 @@ export function TrackerTables({
                           <Button
                             variant="ghost"
                             size="icon-sm"
-                            onClick={() => row.id && handleDelete("vencidos", row.id)}
+                            onClick={() => row.id && handleDeleteClick("vencidos", row.id)}
                             disabled={!row.id}
                             className="text-destructive hover:text-destructive"
                             aria-label="Eliminar"
@@ -455,7 +470,7 @@ export function TrackerTables({
                           <Button
                             variant="ghost"
                             size="icon-sm"
-                            onClick={() => row.id && handleDelete("fallados", row.id)}
+                            onClick={() => row.id && handleDeleteClick("fallados", row.id)}
                             disabled={!row.id}
                             className="text-destructive hover:text-destructive"
                             aria-label="Eliminar"
