@@ -16,7 +16,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { formatExpiryDate, getDaysRemaining, toDateOnly, cn } from "@/lib/utils";
 import type { TrackerData, Vencimiento, Vencido, Fallado } from "@/lib/utils";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 
 type TableKind = "vencimientos" | "vencidos" | "fallados";
@@ -44,8 +44,22 @@ export function TrackerTables({
   const [formCategoria, setFormCategoria] = useState("");
   const [formCant, setFormCant] = useState(0);
 
-  // Delete confirmation dialog
-  const [deleteConfirm, setDeleteConfirm] = useState<{ kind: TableKind; id: string } | null>(null);
+  // Delete confirmation dialog (single id or multiple ids for bulk delete)
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    kind: TableKind;
+    id?: string;
+    ids?: string[];
+  } | null>(null);
+
+  // Multi-select for bulk delete (only rows with id are selectable)
+  const [selectedVencimientos, setSelectedVencimientos] = useState<Set<string>>(new Set());
+  const [selectedVencidos, setSelectedVencidos] = useState<Set<string>>(new Set());
+  const [selectedFallados, setSelectedFallados] = useState<Set<string>>(new Set());
+
+  // Dialog: move vencimiento → vencidos (only stock to fill)
+  const [moveToVencidosRow, setMoveToVencidosRow] = useState<Vencimiento | null>(null);
+  const [moveToVencidosStock, setMoveToVencidosStock] = useState(0);
+  const [moveToVencidosSaving, setMoveToVencidosSaving] = useState(false);
 
   // Search filter per tab
   const [searchVencimientos, setSearchVencimientos] = useState("");
@@ -226,13 +240,101 @@ export function TrackerTables({
     setDeleteConfirm({ kind, id });
   };
 
+  const handleBulkDeleteClick = (kind: TableKind) => {
+    const ids =
+      kind === "vencimientos"
+        ? Array.from(selectedVencimientos)
+        : kind === "vencidos"
+          ? Array.from(selectedVencidos)
+          : Array.from(selectedFallados);
+    if (ids.length === 0) return;
+    setDeleteConfirm({ kind, ids });
+  };
+
   const handleDeleteConfirm = async () => {
     if (!deleteConfirm) return;
-    const { kind, id } = deleteConfirm;
-    const res = await fetch(`/api/${kind}/${id}`, { method: "DELETE" });
-    if (!res.ok) throw new Error("Error al eliminar");
-    toast.success("Eliminado");
+    const { kind, id, ids } = deleteConfirm;
+    const toDelete = ids && ids.length > 0 ? ids : id ? [id] : [];
+    for (const idToDelete of toDelete) {
+      const res = await fetch(`/api/${kind}/${idToDelete}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Error al eliminar");
+    }
+    toast.success(toDelete.length > 1 ? `${toDelete.length} eliminados` : "Eliminado");
+    if (kind === "vencimientos") setSelectedVencimientos(new Set());
+    else if (kind === "vencidos") setSelectedVencidos(new Set());
+    else setSelectedFallados(new Set());
+    setDeleteConfirm(null);
     onDataChange?.();
+  };
+
+  const toggleSelectRow = (kind: TableKind, id: string, checked: boolean) => {
+    if (kind === "vencimientos") {
+      setSelectedVencimientos((prev) => {
+        const next = new Set(prev);
+        if (checked) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+    } else if (kind === "vencidos") {
+      setSelectedVencidos((prev) => {
+        const next = new Set(prev);
+        if (checked) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+    } else {
+      setSelectedFallados((prev) => {
+        const next = new Set(prev);
+        if (checked) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+    }
+  };
+
+  const toggleSelectAll = (kind: TableKind, checked: boolean) => {
+    const rows =
+      kind === "vencimientos"
+        ? filteredVencimientos.filter((r) => r.id)
+        : kind === "vencidos"
+          ? filteredVencidos.filter((r) => r.id)
+          : filteredFallados.filter((r) => r.id);
+    const ids = rows.map((r) => r.id!);
+    if (kind === "vencimientos") setSelectedVencimientos(checked ? new Set(ids) : new Set());
+    else if (kind === "vencidos") setSelectedVencidos(checked ? new Set(ids) : new Set());
+    else setSelectedFallados(checked ? new Set(ids) : new Set());
+  };
+
+  const handleMoveToVencidos = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!moveToVencidosRow) return;
+    setMoveToVencidosSaving(true);
+    try {
+      const base = "/api";
+      const res = await fetch(`${base}/vencidos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productName: moveToVencidosRow.producto.trim(),
+          articulo: moveToVencidosRow.articulo?.trim() || null,
+          expiry_date: moveToVencidosRow.vencimiento ? toDateOnly(moveToVencidosRow.vencimiento) : null,
+          stock: moveToVencidosStock,
+          productId: moveToVencidosRow.product_id || undefined,
+        }),
+      });
+      if (!res.ok) throw new Error("Error al crear en vencidos");
+      if (moveToVencidosRow.id) {
+        const delRes = await fetch(`${base}/vencimientos/${moveToVencidosRow.id}`, { method: "DELETE" });
+        if (!delRes.ok) throw new Error("Error al eliminar de vencimientos");
+      }
+      toast.success("Pasado a vencidos");
+      setMoveToVencidosRow(null);
+      onDataChange?.();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Error");
+    } finally {
+      setMoveToVencidosSaving(false);
+    }
   };
 
   const dialogTitle =
@@ -253,8 +355,12 @@ export function TrackerTables({
       <ConfirmDialog
         open={!!deleteConfirm}
         onOpenChange={(open) => !open && setDeleteConfirm(null)}
-        title="Eliminar registro"
-        description="¿Eliminar este registro? Esta acción no se puede deshacer."
+        title={deleteConfirm?.ids && deleteConfirm.ids.length > 1 ? "Eliminar registros" : "Eliminar registro"}
+        description={
+          deleteConfirm?.ids && deleteConfirm.ids.length > 1
+            ? `¿Eliminar ${deleteConfirm.ids.length} registros? Esta acción no se puede deshacer.`
+            : "¿Eliminar este registro? Esta acción no se puede deshacer."
+        }
         confirmLabel="Eliminar"
         cancelLabel="Cancelar"
         variant="destructive"
@@ -268,7 +374,7 @@ export function TrackerTables({
         </TabsList>
 
         <TabsContent value="vencimientos" className="mt-4">
-          <div className="mb-2 flex w-full items-center gap-2">
+          <div className="mb-2 flex w-full flex-wrap items-center gap-2">
             <Input
               placeholder="Buscar (producto, artículo, categoría)..."
               value={searchVencimientos}
@@ -279,23 +385,48 @@ export function TrackerTables({
               <Plus className="size-4" />
               Agregar
             </Button>
+            {selectedVencimientos.size > 0 && (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => handleBulkDeleteClick("vencimientos")}
+                className="shrink-0"
+              >
+                Eliminar seleccionados ({selectedVencimientos.size})
+              </Button>
+            )}
           </div>
           <div className="w-full overflow-x-auto rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">
+                    <input
+                      type="checkbox"
+                      role="checkbox"
+                      aria-label="Seleccionar todos"
+                      className="h-4 w-4 rounded border-input"
+                      checked={
+                        filteredVencimientos.filter((r) => r.id).length > 0 &&
+                        filteredVencimientos.every((r) => !r.id || selectedVencimientos.has(r.id))
+                      }
+                      onChange={(e) =>
+                        toggleSelectAll("vencimientos", e.target.checked)
+                      }
+                    />
+                  </TableHead>
                   <TableHead>Artículo</TableHead>
                   <TableHead>Producto</TableHead>
                   <TableHead>Vencimiento</TableHead>
                   <TableHead>Categoría</TableHead>
                   <TableHead className="text-right">Días restantes</TableHead>
-                  <TableHead className="w-[80px]">Acciones</TableHead>
+                  <TableHead className="w-[100px]">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredVencimientos.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                    <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                       {vencimientos.length === 0 ? "No hay productos." : "No hay coincidencias con la búsqueda."}
                     </TableCell>
                   </TableRow>
@@ -303,8 +434,23 @@ export function TrackerTables({
                   filteredVencimientos.map((row, i) => {
                     const hasVencimiento = !!row.vencimiento?.trim();
                     const days = hasVencimiento ? getDaysRemaining(row.vencimiento) : null;
+                    const canSelect = !!row.id;
                     return (
                       <TableRow key={row.id ?? `v-${i}-${row.product_id ?? row.producto}`}>
+                        <TableCell>
+                          {canSelect ? (
+                            <input
+                              type="checkbox"
+                              role="checkbox"
+                              aria-label="Seleccionar"
+                              className="h-4 w-4 rounded border-input"
+                              checked={selectedVencimientos.has(row.id!)}
+                              onChange={(e) =>
+                                toggleSelectRow("vencimientos", row.id!, e.target.checked)
+                              }
+                            />
+                          ) : null}
+                        </TableCell>
                         <TableCell className="font-medium">{row.articulo || "—"}</TableCell>
                         <TableCell>{row.producto || "—"}</TableCell>
                         <TableCell>{hasVencimiento ? formatExpiryDate(row.vencimiento) : "—"}</TableCell>
@@ -319,6 +465,20 @@ export function TrackerTables({
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-1">
+                            {row.id && (
+                              <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                onClick={() => {
+                                  setMoveToVencidosRow(row);
+                                  setMoveToVencidosStock(0);
+                                }}
+                                aria-label="Pasar a vencidos"
+                                title="Pasar a vencidos"
+                              >
+                                <ArrowRight className="size-4" />
+                              </Button>
+                            )}
                             <Button
                               variant="ghost"
                               size="icon-sm"
@@ -350,7 +510,7 @@ export function TrackerTables({
         </TabsContent>
 
         <TabsContent value="vencidos" className="mt-4">
-          <div className="mb-2 flex w-full items-center gap-2">
+          <div className="mb-2 flex w-full flex-wrap items-center gap-2">
             <Input
               placeholder="Buscar (artículo, nombre)..."
               value={searchVencidos}
@@ -361,11 +521,34 @@ export function TrackerTables({
               <Plus className="size-4" />
               Agregar
             </Button>
+            {selectedVencidos.size > 0 && (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => handleBulkDeleteClick("vencidos")}
+                className="shrink-0"
+              >
+                Eliminar seleccionados ({selectedVencidos.size})
+              </Button>
+            )}
           </div>
           <div className="w-full overflow-x-auto rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">
+                    <input
+                      type="checkbox"
+                      role="checkbox"
+                      aria-label="Seleccionar todos"
+                      className="h-4 w-4 rounded border-input"
+                      checked={
+                        filteredVencidos.filter((r) => r.id).length > 0 &&
+                        filteredVencidos.every((r) => !r.id || selectedVencidos.has(r.id))
+                      }
+                      onChange={(e) => toggleSelectAll("vencidos", e.target.checked)}
+                    />
+                  </TableHead>
                   <TableHead>Artículo</TableHead>
                   <TableHead>Nombre</TableHead>
                   <TableHead>Fecha vencida</TableHead>
@@ -376,13 +559,25 @@ export function TrackerTables({
               <TableBody>
                 {filteredVencidos.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                    <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                       {vencidos.length === 0 ? "No hay productos vencidos." : "No hay coincidencias con la búsqueda."}
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredVencidos.map((row, i) => (
                     <TableRow key={row.id ?? `vd-${i}-${row.articulo}-${row.fecha_venci}`}>
+                      <TableCell>
+                        {row.id ? (
+                          <input
+                            type="checkbox"
+                            role="checkbox"
+                            aria-label="Seleccionar"
+                            className="h-4 w-4 rounded border-input"
+                            checked={selectedVencidos.has(row.id)}
+                            onChange={(e) => toggleSelectRow("vencidos", row.id!, e.target.checked)}
+                          />
+                        ) : null}
+                      </TableCell>
                       <TableCell className="font-medium">{row.articulo || "—"}</TableCell>
                       <TableCell>{row.nombre || "—"}</TableCell>
                       <TableCell>
@@ -421,10 +616,10 @@ export function TrackerTables({
         </TabsContent>
 
         <TabsContent value="fallados" className="mt-4">
-          <div className="mb-2 flex w-full items-center gap-2">
+          <div className="mb-2 flex w-full flex-wrap items-center gap-2">
             <Input
-            placeholder="Buscar (artículo, nombre)..."
-            value={searchFallados}
+              placeholder="Buscar (artículo, nombre)..."
+              value={searchFallados}
               onChange={(e) => setSearchFallados(e.target.value)}
               className="min-w-0 flex-1"
             />
@@ -432,11 +627,34 @@ export function TrackerTables({
               <Plus className="size-4" />
               Agregar
             </Button>
+            {selectedFallados.size > 0 && (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => handleBulkDeleteClick("fallados")}
+                className="shrink-0"
+              >
+                Eliminar seleccionados ({selectedFallados.size})
+              </Button>
+            )}
           </div>
           <div className="w-full overflow-x-auto rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">
+                    <input
+                      type="checkbox"
+                      role="checkbox"
+                      aria-label="Seleccionar todos"
+                      className="h-4 w-4 rounded border-input"
+                      checked={
+                        filteredFallados.filter((r) => r.id).length > 0 &&
+                        filteredFallados.every((r) => !r.id || selectedFallados.has(r.id))
+                      }
+                      onChange={(e) => toggleSelectAll("fallados", e.target.checked)}
+                    />
+                  </TableHead>
                   <TableHead>Artículo</TableHead>
                   <TableHead>Nombre</TableHead>
                   <TableHead className="text-right">Cant</TableHead>
@@ -446,13 +664,25 @@ export function TrackerTables({
               <TableBody>
                 {filteredFallados.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
                       {fallados.length === 0 ? "No hay productos fallados." : "No hay coincidencias con la búsqueda."}
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredFallados.map((row, i) => (
                     <TableRow key={row.id ?? `f-${i}-${row.articulo}`}>
+                      <TableCell>
+                        {row.id ? (
+                          <input
+                            type="checkbox"
+                            role="checkbox"
+                            aria-label="Seleccionar"
+                            className="h-4 w-4 rounded border-input"
+                            checked={selectedFallados.has(row.id)}
+                            onChange={(e) => toggleSelectRow("fallados", row.id!, e.target.checked)}
+                          />
+                        ) : null}
+                      </TableCell>
                       <TableCell className="font-medium">{row.articulo || "—"}</TableCell>
                       <TableCell>{row.nombre || "—"}</TableCell>
                       <TableCell className="text-right">{Number.isFinite(row.cant) ? row.cant : "—"}</TableCell>
@@ -636,6 +866,65 @@ export function TrackerTables({
             </Button>
           </div>
         </form>
+      </Dialog>
+
+      <Dialog
+        open={!!moveToVencidosRow}
+        onOpenChange={(open) => !open && setMoveToVencidosRow(null)}
+        title="Pasar a vencidos"
+      >
+        {moveToVencidosRow && (
+          <form onSubmit={handleMoveToVencidos} className="flex flex-col gap-3">
+            <p className="text-muted-foreground text-sm">
+              Completá la cantidad (stock). El resto de los datos se copian del vencimiento.
+            </p>
+            <div>
+              <label className="mb-1 block text-sm font-medium">Producto</label>
+              <Input className="w-full bg-muted" value={moveToVencidosRow.producto || "—"} readOnly disabled />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium">Artículo</label>
+              <Input className="w-full bg-muted" value={moveToVencidosRow.articulo || "—"} readOnly disabled />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium">Fecha vencida</label>
+              <Input
+                className="w-full bg-muted"
+                value={
+                  moveToVencidosRow.vencimiento
+                    ? formatExpiryDate(moveToVencidosRow.vencimiento)
+                    : "—"
+                }
+                readOnly
+                disabled
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium">Cantidad (stock) *</label>
+              <Input
+                className="w-full"
+                type="number"
+                min={0}
+                value={moveToVencidosStock}
+                onChange={(e) => setMoveToVencidosStock(Number(e.target.value) || 0)}
+                placeholder="Ingresá la cantidad"
+                required
+              />
+            </div>
+            <div className="flex justify-end gap-2 border-t pt-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setMoveToVencidosRow(null)}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={moveToVencidosSaving}>
+                {moveToVencidosSaving ? "Guardando…" : "Pasar a vencidos"}
+              </Button>
+            </div>
+          </form>
+        )}
       </Dialog>
     </>
   );

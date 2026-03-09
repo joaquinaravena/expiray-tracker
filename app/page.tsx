@@ -236,14 +236,17 @@ export default function Home() {
             </div>
           </Dialog>
           <CardContent>
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="size-8 animate-spin text-muted-foreground" />
-              </div>
-            ) : error ? (
+            {error ? (
               <p className="py-8 text-center text-destructive">{error}</p>
             ) : (
-              <TrackerTables data={data} onDataChange={onDataChange} />
+              <div className="relative">
+                {loading && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-background/80">
+                    <Loader2 className="size-8 animate-spin text-muted-foreground" />
+                  </div>
+                )}
+                <TrackerTables data={data} onDataChange={onDataChange} />
+              </div>
             )}
           </CardContent>
         </Card>
