@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatExpiryDate, getDaysRemaining } from "@/lib/utils";
+import { formatExpiryDateShort, getDaysRemaining } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 export type Product = {
@@ -18,7 +18,7 @@ export type Product = {
 
 export function DataTable({ products }: { products: Product[] }) {
   return (
-    <div className="w-full overflow-x-auto rounded-md border">
+    <div className="w-full rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
@@ -40,7 +40,7 @@ export function DataTable({ products }: { products: Product[] }) {
               return (
                 <TableRow key={`${product.name}-${product.expiry_date}`}>
                   <TableCell className="font-medium">{product.name}</TableCell>
-                  <TableCell>{formatExpiryDate(product.expiry_date)}</TableCell>
+                  <TableCell className="whitespace-nowrap">{formatExpiryDateShort(product.expiry_date)}</TableCell>
                   <TableCell
                     className={cn(
                       "text-right font-medium",

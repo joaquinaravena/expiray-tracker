@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { formatExpiryDate, getDaysRemaining, toDateOnly, cn } from "@/lib/utils";
+import { formatExpiryDateShort, getDaysRemaining, toDateOnly, cn } from "@/lib/utils";
 import type { TrackerData, Vencimiento, Vencido, Fallado } from "@/lib/utils";
 import { Pencil, Trash2, Plus, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
@@ -396,7 +396,7 @@ export function TrackerTables({
               </Button>
             )}
           </div>
-          <div className="w-full overflow-x-auto rounded-md border">
+          <div className="w-full rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -420,7 +420,7 @@ export function TrackerTables({
                   <TableHead>Vencimiento</TableHead>
                   <TableHead>Categoría</TableHead>
                   <TableHead className="text-right">Días restantes</TableHead>
-                  <TableHead className="w-[100px]">Acciones</TableHead>
+                  <TableHead className="w-[100px] whitespace-nowrap">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -437,7 +437,7 @@ export function TrackerTables({
                     const canSelect = !!row.id;
                     return (
                       <TableRow key={row.id ?? `v-${i}-${row.product_id ?? row.producto}`}>
-                        <TableCell>
+                        <TableCell className="whitespace-nowrap">
                           {canSelect ? (
                             <input
                               type="checkbox"
@@ -453,7 +453,9 @@ export function TrackerTables({
                         </TableCell>
                         <TableCell className="font-medium">{row.articulo || "—"}</TableCell>
                         <TableCell>{row.producto || "—"}</TableCell>
-                        <TableCell>{hasVencimiento ? formatExpiryDate(row.vencimiento) : "—"}</TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          {hasVencimiento ? formatExpiryDateShort(row.vencimiento) : "—"}
+                        </TableCell>
                         <TableCell>{row.categoria || "—"}</TableCell>
                         <TableCell
                           className={cn(
@@ -463,7 +465,7 @@ export function TrackerTables({
                         >
                           {days != null ? days : "—"}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="whitespace-nowrap">
                           <div className="flex gap-1">
                             {row.id && (
                               <Button
@@ -532,7 +534,7 @@ export function TrackerTables({
               </Button>
             )}
           </div>
-          <div className="w-full overflow-x-auto rounded-md border">
+          <div className="w-full rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -553,7 +555,7 @@ export function TrackerTables({
                   <TableHead>Nombre</TableHead>
                   <TableHead>Fecha vencida</TableHead>
                   <TableHead className="text-right">Cant</TableHead>
-                  <TableHead className="w-[80px]">Acciones</TableHead>
+                  <TableHead className="w-[80px] whitespace-nowrap">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -566,7 +568,7 @@ export function TrackerTables({
                 ) : (
                   filteredVencidos.map((row, i) => (
                     <TableRow key={row.id ?? `vd-${i}-${row.articulo}-${row.fecha_venci}`}>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         {row.id ? (
                           <input
                             type="checkbox"
@@ -581,10 +583,10 @@ export function TrackerTables({
                       <TableCell className="font-medium">{row.articulo || "—"}</TableCell>
                       <TableCell>{row.nombre || "—"}</TableCell>
                       <TableCell>
-                        {row.fecha_venci ? formatExpiryDate(row.fecha_venci) : "—"}
+                        {row.fecha_venci ? formatExpiryDateShort(row.fecha_venci) : "—"}
                       </TableCell>
                       <TableCell className="text-right">{Number.isFinite(row.cant) ? row.cant : "—"}</TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <div className="flex gap-1">
                           <Button
                             variant="ghost"
@@ -638,7 +640,7 @@ export function TrackerTables({
               </Button>
             )}
           </div>
-          <div className="w-full overflow-x-auto rounded-md border">
+          <div className="w-full rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -658,7 +660,7 @@ export function TrackerTables({
                   <TableHead>Artículo</TableHead>
                   <TableHead>Nombre</TableHead>
                   <TableHead className="text-right">Cant</TableHead>
-                  <TableHead className="w-[80px]">Acciones</TableHead>
+                  <TableHead className="w-[80px] whitespace-nowrap">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -671,7 +673,7 @@ export function TrackerTables({
                 ) : (
                   filteredFallados.map((row, i) => (
                     <TableRow key={row.id ?? `f-${i}-${row.articulo}`}>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         {row.id ? (
                           <input
                             type="checkbox"
@@ -686,7 +688,7 @@ export function TrackerTables({
                       <TableCell className="font-medium">{row.articulo || "—"}</TableCell>
                       <TableCell>{row.nombre || "—"}</TableCell>
                       <TableCell className="text-right">{Number.isFinite(row.cant) ? row.cant : "—"}</TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <div className="flex gap-1">
                           <Button
                             variant="ghost"
@@ -892,7 +894,7 @@ export function TrackerTables({
                 className="w-full bg-muted"
                 value={
                   moveToVencidosRow.vencimiento
-                    ? formatExpiryDate(moveToVencidosRow.vencimiento)
+                    ? formatExpiryDateShort(moveToVencidosRow.vencimiento)
                     : "—"
                 }
                 readOnly

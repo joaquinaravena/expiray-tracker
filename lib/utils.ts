@@ -77,6 +77,17 @@ export function formatExpiryDate(dateStr: string): string {
   return `${day}/${month}/${year}`
 }
 
+/** Format YYYY-MM-DD (or ISO) to dd/MM (compact for tables). */
+export function formatExpiryDateShort(dateStr: string): string {
+  const ymd = toDateOnly(dateStr)
+  if (!ymd) return dateStr
+  const d = new Date(ymd + "T12:00:00")
+  if (isNaN(d.getTime())) return dateStr
+  const day = String(d.getDate()).padStart(2, "0")
+  const month = String(d.getMonth() + 1).padStart(2, "0")
+  return `${day}/${month}`
+}
+
 /** Days remaining until expiry (floor). Negative = already expired. Returns 0 if date is invalid. */
 export function getDaysRemaining(expiryDateStr: string): number {
   const ymd = toDateOnly(expiryDateStr)
