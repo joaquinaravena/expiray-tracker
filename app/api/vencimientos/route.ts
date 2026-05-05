@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllVencimientos, createVencimiento } from "@/lib/queries";
+import { DEFAULT_BRANCH, normalizeBranchCode } from "@/lib/branches";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const rows = await getAllVencimientos();
+    const branchParam = request.nextUrl.searchParams.get("branch");
+    const branch = branchParam ? normalizeBranchCode(branchParam) : DEFAULT_BRANCH;
+    if (!branch) {
+      return NextResponse.json({ error: "branch inválido. Usa don-bosco o alem" }, { status: 400 });
+    }
+    const rows = await getAllVencimientos(branch);
     return NextResponse.json(rows);
   } catch (err) {
     console.error("[GET /api/vencimientos]", err);
@@ -14,13 +20,18 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { productName, articulo, expiry_date, category, productId } = body as {
+    const { productName, articulo, expiry_date, category, productId, branch } = body as {
       productName: string;
       articulo?: string | null;
       expiry_date: string;
       category?: string | null;
       productId?: string | null;
+      branch?: string;
     };
+    const normalizedBranch = normalizeBranchCode(branch ?? DEFAULT_BRANCH);
+    if (!normalizedBranch) {
+      return NextResponse.json({ error: "branch inválido. Usa don-bosco o alem" }, { status: 400 });
+    }
     if (!productName?.trim() || !expiry_date) {
       return NextResponse.json(
         { error: "productName y expiry_date son requeridos" },
@@ -33,6 +44,7 @@ export async function POST(request: NextRequest) {
       expiry_date,
       category: category ?? null,
       productId: productId?.trim() || undefined,
+      branchCode: normalizedBranch,
     });
     return NextResponse.json(row, { status: 201 });
   } catch (err) {

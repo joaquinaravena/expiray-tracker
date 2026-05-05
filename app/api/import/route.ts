@@ -9,6 +9,7 @@ import {
   getAllVencidos,
   getAllFallados,
 } from "@/lib/queries";
+import { DEFAULT_BRANCH, normalizeBranchCode } from "@/lib/branches";
 
 const LOG_PREFIX = "[import]";
 
@@ -100,6 +101,14 @@ export async function POST(request: NextRequest) {
     console.log(LOG_PREFIX, "Request received");
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
+    const branchRaw = formData.get("branch");
+    const branch = normalizeBranchCode(typeof branchRaw === "string" ? branchRaw : DEFAULT_BRANCH);
+    if (!branch) {
+      return Response.json(
+        { error: "branch inválido. Usa don-bosco o alem." },
+        { status: 400 }
+      );
+    }
     if (!file) {
       console.error(LOG_PREFIX, "No file in formData; expected field 'file'");
       return Response.json(
@@ -234,6 +243,7 @@ export async function POST(request: NextRequest) {
         articulo: row.articulo || null,
         expiry_date: row.vencimiento,
         category: row.categoria || null,
+        branchCode: branch,
       });
     }
     for (const row of vencidos) {
@@ -242,6 +252,7 @@ export async function POST(request: NextRequest) {
         articulo: row.articulo || null,
         expiry_date: row.fecha_venci || null,
         stock: row.cant,
+        branchCode: branch,
       });
     }
     for (const row of fallados) {
@@ -249,13 +260,14 @@ export async function POST(request: NextRequest) {
         productName: row.nombre || row.articulo,
         articulo: row.articulo || null,
         stock: row.cant,
+        branchCode: branch,
       });
     }
 
     const data: TrackerData = {
-      vencimientos: await getAllVencimientos(),
-      vencidos: await getAllVencidos(),
-      fallados: await getAllFallados(),
+      vencimientos: await getAllVencimientos(branch),
+      vencidos: await getAllVencidos(branch),
+      fallados: await getAllFallados(branch),
     };
     console.log(
       LOG_PREFIX,

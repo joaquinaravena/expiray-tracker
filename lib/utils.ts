@@ -5,6 +5,8 @@ import { twMerge } from "tailwind-merge"
 export type Vencimiento = {
   id?: string
   product_id?: string
+  branch_id?: string
+  branch_code?: string
   producto: string
   articulo: string
   vencimiento: string
@@ -13,6 +15,8 @@ export type Vencimiento = {
 export type Vencido = {
   id?: string
   product_id?: string
+  branch_id?: string
+  branch_code?: string
   articulo: string
   nombre: string
   fecha_venci: string
@@ -21,6 +25,8 @@ export type Vencido = {
 export type Fallado = {
   id?: string
   product_id?: string
+  branch_id?: string
+  branch_code?: string
   articulo: string
   nombre: string
   cant: number
@@ -36,6 +42,7 @@ export type ProductRow = { id: string; name: string; articulo?: string | null; c
 export type VencimientoRow = {
   id: string
   product_id: string
+  branch_id: string
   expiry_date: string
   category: string | null
   created_at?: string
@@ -43,6 +50,7 @@ export type VencimientoRow = {
 export type VencidoRow = {
   id: string
   product_id: string
+  branch_id: string
   expiry_date: string | null
   stock: number
   created_at?: string
@@ -50,6 +58,7 @@ export type VencidoRow = {
 export type FalladoRow = {
   id: string
   product_id: string
+  branch_id: string
   stock: number
   created_at?: string
 }

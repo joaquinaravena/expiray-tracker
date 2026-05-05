@@ -1,4 +1,5 @@
 import { sql, queryOne } from "@/lib/db";
+import { DEFAULT_BRANCH, type BranchCode } from "@/lib/branches";
 import type {
   Vencimiento,
   Vencido,
@@ -8,6 +9,26 @@ import type {
   VencidoRow,
   FalladoRow,
 } from "@/lib/utils";
+
+type BranchRow = {
+  id: string;
+  code: BranchCode;
+  name: string;
+  color?: string | null;
+  created_at?: string;
+};
+
+async function getBranchByCode(code: BranchCode): Promise<BranchRow> {
+  const rows = await sql`
+    SELECT id, code, name, color, created_at
+    FROM branches
+    WHERE code = ${code}
+    LIMIT 1
+  `;
+  const branch = queryOne(rows as BranchRow[]);
+  if (!branch) throw new Error(`Branch not found: ${code}`);
+  return branch;
+}
 
 // ----- Products -----
 
@@ -69,10 +90,14 @@ export async function searchProducts(q: string, limit = 20): Promise<ProductRow[
 
 // ----- Vencimientos -----
 
-function mapVencimientoRow(r: VencimientoRow & { product_name?: string; product_articulo?: string | null }): Vencimiento {
+function mapVencimientoRow(
+  r: VencimientoRow & { product_name?: string; product_articulo?: string | null; branch_code?: string },
+): Vencimiento {
   return {
     id: r.id,
     product_id: r.product_id,
+    branch_id: r.branch_id,
+    branch_code: r.branch_code,
     producto: r.product_name ?? "",
     articulo: r.product_articulo ?? "",
     vencimiento: r.expiry_date,
@@ -81,28 +106,34 @@ function mapVencimientoRow(r: VencimientoRow & { product_name?: string; product_
 }
 
 /** All products with their soonest expiry (one row per product). Products without vencimiento have null expiry and appear at the end. */
-export async function getAllVencimientos(): Promise<Vencimiento[]> {
+export async function getAllVencimientos(branchCode: BranchCode = DEFAULT_BRANCH): Promise<Vencimiento[]> {
+  const branch = await getBranchByCode(branchCode);
   const rows = await sql`
     SELECT
       v.id,
       p.id AS product_id,
+      v.branch_id,
+      b.code AS branch_code,
       v.expiry_date,
       v.category,
       p.name AS product_name,
       p.articulo AS product_articulo
     FROM products p
     LEFT JOIN LATERAL (
-      SELECT id, product_id, expiry_date, category
+      SELECT id, product_id, branch_id, expiry_date, category
       FROM vencimientos
-      WHERE product_id = p.id
+      WHERE product_id = p.id AND branch_id = ${branch.id}
       ORDER BY expiry_date ASC
       LIMIT 1
     ) v ON true
+    LEFT JOIN branches b ON b.id = v.branch_id
     ORDER BY v.expiry_date ASC NULLS LAST, p.name ASC
   `;
-  return (rows as (VencimientoRow & { product_name: string; product_articulo?: string | null })[]).map((r) => ({
+  return (rows as (VencimientoRow & { product_name: string; product_articulo?: string | null; branch_code?: string })[]).map((r) => ({
     id: r.id ?? undefined,
     product_id: r.product_id,
+    branch_id: r.branch_id ?? undefined,
+    branch_code: r.branch_code ?? undefined,
     producto: r.product_name ?? "",
     articulo: r.product_articulo ?? "",
     vencimiento: r.expiry_date ?? "",
@@ -110,15 +141,26 @@ export async function getAllVencimientos(): Promise<Vencimiento[]> {
   }));
 }
 
-export async function getVencimientoById(id: string): Promise<Vencimiento | null> {
-  const rows = await sql`
-    SELECT v.id, v.product_id, v.expiry_date, v.category, v.created_at, p.name AS product_name, p.articulo AS product_articulo
-    FROM vencimientos v
-    JOIN products p ON p.id = v.product_id
-    WHERE v.id = ${id}
-    LIMIT 1
-  `;
-  const row = queryOne(rows as (VencimientoRow & { product_name: string; product_articulo?: string | null })[]);
+export async function getVencimientoById(id: string, branchCode?: BranchCode): Promise<Vencimiento | null> {
+  const branch = branchCode ? await getBranchByCode(branchCode) : null;
+  const rows = branch
+    ? await sql`
+        SELECT v.id, v.product_id, v.branch_id, b.code AS branch_code, v.expiry_date, v.category, v.created_at, p.name AS product_name, p.articulo AS product_articulo
+        FROM vencimientos v
+        JOIN products p ON p.id = v.product_id
+        JOIN branches b ON b.id = v.branch_id
+        WHERE v.id = ${id} AND v.branch_id = ${branch.id}
+        LIMIT 1
+      `
+    : await sql`
+        SELECT v.id, v.product_id, v.branch_id, b.code AS branch_code, v.expiry_date, v.category, v.created_at, p.name AS product_name, p.articulo AS product_articulo
+        FROM vencimientos v
+        JOIN products p ON p.id = v.product_id
+        JOIN branches b ON b.id = v.branch_id
+        WHERE v.id = ${id}
+        LIMIT 1
+      `;
+  const row = queryOne(rows as (VencimientoRow & { product_name: string; product_articulo?: string | null; branch_code?: string })[]);
   return row ? mapVencimientoRow(row) : null;
 }
 
@@ -128,7 +170,9 @@ export async function createVencimiento(args: {
   expiry_date: string;
   category?: string | null;
   productId?: string | null;
+  branchCode?: BranchCode;
 }): Promise<Vencimiento> {
+  const branch = await getBranchByCode(args.branchCode ?? DEFAULT_BRANCH);
   let product: ProductRow;
   if (args.productId?.trim()) {
     const existing = await getProductById(args.productId.trim());
@@ -140,13 +184,18 @@ export async function createVencimiento(args: {
     product = await findOrCreateProductByName(args.productName, args.articulo);
   }
   const inserted = await sql`
-    INSERT INTO vencimientos (product_id, expiry_date, category)
-    VALUES (${product.id}, ${args.expiry_date}, ${args.category ?? null})
-    RETURNING id, product_id, expiry_date, category, created_at
+    INSERT INTO vencimientos (product_id, branch_id, expiry_date, category)
+    VALUES (${product.id}, ${branch.id}, ${args.expiry_date}, ${args.category ?? null})
+    RETURNING id, product_id, branch_id, expiry_date, category, created_at
   `;
   const row = queryOne(inserted as VencimientoRow[]);
   if (!row) throw new Error("Failed to create vencimiento");
-  return mapVencimientoRow({ ...row, product_name: product.name, product_articulo: product.articulo ?? null });
+  return mapVencimientoRow({
+    ...row,
+    branch_code: branch.code,
+    product_name: product.name,
+    product_articulo: product.articulo ?? null,
+  });
 }
 
 export async function updateVencimiento(
@@ -169,10 +218,14 @@ export async function deleteVencimiento(id: string): Promise<boolean> {
 
 // ----- Vencidos -----
 
-function mapVencidoRow(r: VencidoRow & { product_name?: string; product_articulo?: string | null }): Vencido {
+function mapVencidoRow(
+  r: VencidoRow & { product_name?: string; product_articulo?: string | null; branch_code?: string },
+): Vencido {
   return {
     id: r.id,
     product_id: r.product_id,
+    branch_id: r.branch_id,
+    branch_code: r.branch_code,
     articulo: r.product_articulo ?? "",
     nombre: r.product_name ?? "",
     fecha_venci: r.expiry_date ?? "",
@@ -180,25 +233,39 @@ function mapVencidoRow(r: VencidoRow & { product_name?: string; product_articulo
   };
 }
 
-export async function getAllVencidos(): Promise<Vencido[]> {
+export async function getAllVencidos(branchCode: BranchCode = DEFAULT_BRANCH): Promise<Vencido[]> {
+  const branch = await getBranchByCode(branchCode);
   const rows = await sql`
-    SELECT v.id, v.product_id, v.expiry_date, v.stock, v.created_at, p.name AS product_name, p.articulo AS product_articulo
+    SELECT v.id, v.product_id, v.branch_id, b.code AS branch_code, v.expiry_date, v.stock, v.created_at, p.name AS product_name, p.articulo AS product_articulo
     FROM vencidos v
+    JOIN branches b ON b.id = v.branch_id
     JOIN products p ON p.id = v.product_id
+    WHERE v.branch_id = ${branch.id}
     ORDER BY p.name ASC
   `;
-  return (rows as (VencidoRow & { product_name: string; product_articulo?: string | null })[]).map(mapVencidoRow);
+  return (rows as (VencidoRow & { product_name: string; product_articulo?: string | null; branch_code?: string })[]).map(mapVencidoRow);
 }
 
-export async function getVencidoById(id: string): Promise<Vencido | null> {
-  const rows = await sql`
-    SELECT v.id, v.product_id, v.expiry_date, v.stock, v.created_at, p.name AS product_name, p.articulo AS product_articulo
-    FROM vencidos v
-    JOIN products p ON p.id = v.product_id
-    WHERE v.id = ${id}
-    LIMIT 1
-  `;
-  const row = queryOne(rows as (VencidoRow & { product_name: string; product_articulo?: string | null })[]);
+export async function getVencidoById(id: string, branchCode?: BranchCode): Promise<Vencido | null> {
+  const branch = branchCode ? await getBranchByCode(branchCode) : null;
+  const rows = branch
+    ? await sql`
+        SELECT v.id, v.product_id, v.branch_id, b.code AS branch_code, v.expiry_date, v.stock, v.created_at, p.name AS product_name, p.articulo AS product_articulo
+        FROM vencidos v
+        JOIN branches b ON b.id = v.branch_id
+        JOIN products p ON p.id = v.product_id
+        WHERE v.id = ${id} AND v.branch_id = ${branch.id}
+        LIMIT 1
+      `
+    : await sql`
+        SELECT v.id, v.product_id, v.branch_id, b.code AS branch_code, v.expiry_date, v.stock, v.created_at, p.name AS product_name, p.articulo AS product_articulo
+        FROM vencidos v
+        JOIN branches b ON b.id = v.branch_id
+        JOIN products p ON p.id = v.product_id
+        WHERE v.id = ${id}
+        LIMIT 1
+      `;
+  const row = queryOne(rows as (VencidoRow & { product_name: string; product_articulo?: string | null; branch_code?: string })[]);
   return row ? mapVencidoRow(row) : null;
 }
 
@@ -208,7 +275,9 @@ export async function createVencido(args: {
   expiry_date?: string | null;
   stock?: number;
   productId?: string | null;
+  branchCode?: BranchCode;
 }): Promise<Vencido> {
+  const branch = await getBranchByCode(args.branchCode ?? DEFAULT_BRANCH);
   let product: ProductRow;
   if (args.productId?.trim()) {
     const existing = await getProductById(args.productId.trim());
@@ -221,13 +290,18 @@ export async function createVencido(args: {
   }
   const stock = args.stock ?? 0;
   const inserted = await sql`
-    INSERT INTO vencidos (product_id, expiry_date, stock)
-    VALUES (${product.id}, ${args.expiry_date ?? null}, ${stock})
-    RETURNING id, product_id, expiry_date, stock, created_at
+    INSERT INTO vencidos (product_id, branch_id, expiry_date, stock)
+    VALUES (${product.id}, ${branch.id}, ${args.expiry_date ?? null}, ${stock})
+    RETURNING id, product_id, branch_id, expiry_date, stock, created_at
   `;
   const row = queryOne(inserted as VencidoRow[]);
   if (!row) throw new Error("Failed to create vencido");
-  return mapVencidoRow({ ...row, product_name: product.name, product_articulo: product.articulo ?? null });
+  return mapVencidoRow({
+    ...row,
+    branch_code: branch.code,
+    product_name: product.name,
+    product_articulo: product.articulo ?? null,
+  });
 }
 
 export async function updateVencido(
@@ -250,35 +324,53 @@ export async function deleteVencido(id: string): Promise<boolean> {
 
 // ----- Fallados -----
 
-function mapFalladoRow(r: FalladoRow & { product_name?: string; product_articulo?: string | null }): Fallado {
+function mapFalladoRow(
+  r: FalladoRow & { product_name?: string; product_articulo?: string | null; branch_code?: string },
+): Fallado {
   return {
     id: r.id,
     product_id: r.product_id,
+    branch_id: r.branch_id,
+    branch_code: r.branch_code,
     articulo: r.product_articulo ?? "",
     nombre: r.product_name ?? "",
     cant: r.stock,
   };
 }
 
-export async function getAllFallados(): Promise<Fallado[]> {
+export async function getAllFallados(branchCode: BranchCode = DEFAULT_BRANCH): Promise<Fallado[]> {
+  const branch = await getBranchByCode(branchCode);
   const rows = await sql`
-    SELECT f.id, f.product_id, f.stock, f.created_at, p.name AS product_name, p.articulo AS product_articulo
+    SELECT f.id, f.product_id, f.branch_id, b.code AS branch_code, f.stock, f.created_at, p.name AS product_name, p.articulo AS product_articulo
     FROM fallados f
+    JOIN branches b ON b.id = f.branch_id
     JOIN products p ON p.id = f.product_id
+    WHERE f.branch_id = ${branch.id}
     ORDER BY p.name ASC
   `;
-  return (rows as (FalladoRow & { product_name: string; product_articulo?: string | null })[]).map(mapFalladoRow);
+  return (rows as (FalladoRow & { product_name: string; product_articulo?: string | null; branch_code?: string })[]).map(mapFalladoRow);
 }
 
-export async function getFalladoById(id: string): Promise<Fallado | null> {
-  const rows = await sql`
-    SELECT f.id, f.product_id, f.stock, f.created_at, p.name AS product_name, p.articulo AS product_articulo
-    FROM fallados f
-    JOIN products p ON p.id = f.product_id
-    WHERE f.id = ${id}
-    LIMIT 1
-  `;
-  const row = queryOne(rows as (FalladoRow & { product_name: string; product_articulo?: string | null })[]);
+export async function getFalladoById(id: string, branchCode?: BranchCode): Promise<Fallado | null> {
+  const branch = branchCode ? await getBranchByCode(branchCode) : null;
+  const rows = branch
+    ? await sql`
+        SELECT f.id, f.product_id, f.branch_id, b.code AS branch_code, f.stock, f.created_at, p.name AS product_name, p.articulo AS product_articulo
+        FROM fallados f
+        JOIN branches b ON b.id = f.branch_id
+        JOIN products p ON p.id = f.product_id
+        WHERE f.id = ${id} AND f.branch_id = ${branch.id}
+        LIMIT 1
+      `
+    : await sql`
+        SELECT f.id, f.product_id, f.branch_id, b.code AS branch_code, f.stock, f.created_at, p.name AS product_name, p.articulo AS product_articulo
+        FROM fallados f
+        JOIN branches b ON b.id = f.branch_id
+        JOIN products p ON p.id = f.product_id
+        WHERE f.id = ${id}
+        LIMIT 1
+      `;
+  const row = queryOne(rows as (FalladoRow & { product_name: string; product_articulo?: string | null; branch_code?: string })[]);
   return row ? mapFalladoRow(row) : null;
 }
 
@@ -287,7 +379,9 @@ export async function createFallado(args: {
   articulo?: string | null;
   stock?: number;
   productId?: string | null;
+  branchCode?: BranchCode;
 }): Promise<Fallado> {
+  const branch = await getBranchByCode(args.branchCode ?? DEFAULT_BRANCH);
   let product: ProductRow;
   if (args.productId?.trim()) {
     const existing = await getProductById(args.productId.trim());
@@ -300,13 +394,18 @@ export async function createFallado(args: {
   }
   const stock = args.stock ?? 0;
   const inserted = await sql`
-    INSERT INTO fallados (product_id, stock)
-    VALUES (${product.id}, ${stock})
-    RETURNING id, product_id, stock, created_at
+    INSERT INTO fallados (product_id, branch_id, stock)
+    VALUES (${product.id}, ${branch.id}, ${stock})
+    RETURNING id, product_id, branch_id, stock, created_at
   `;
   const row = queryOne(inserted as FalladoRow[]);
   if (!row) throw new Error("Failed to create fallado");
-  return mapFalladoRow({ ...row, product_name: product.name, product_articulo: product.articulo ?? null });
+  return mapFalladoRow({
+    ...row,
+    branch_code: branch.code,
+    product_name: product.name,
+    product_articulo: product.articulo ?? null,
+  });
 }
 
 export async function updateFallado(

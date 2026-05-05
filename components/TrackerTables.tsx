@@ -16,6 +16,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { formatExpiryDateShort, getDaysRemaining, toDateOnly, cn } from "@/lib/utils";
 import type { TrackerData, Vencimiento, Vencido, Fallado } from "@/lib/utils";
+import type { BranchCode } from "@/lib/branches";
 import { Pencil, Trash2, Plus, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,9 +24,11 @@ type TableKind = "vencimientos" | "vencidos" | "fallados";
 
 export function TrackerTables({
   data,
+  activeBranch,
   onDataChange,
 }: {
   data: TrackerData;
+  activeBranch: BranchCode;
   onDataChange?: () => void;
 }) {
   const { vencimientos, vencidos, fallados } = data;
@@ -148,7 +151,7 @@ export function TrackerTables({
           return;
         }
         if (editingId) {
-          const res = await fetch(`${base}/vencimientos/${editingId}`, {
+          const res = await fetch(`${base}/vencimientos/${editingId}?branch=${activeBranch}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -156,6 +159,7 @@ export function TrackerTables({
               expiry_date: formVencimiento,
               category: formCategoria || null,
               articulo: formArticulo.trim() || null,
+              branch: activeBranch,
             }),
           });
           if (!res.ok) throw new Error("Error al actualizar");
@@ -169,13 +173,14 @@ export function TrackerTables({
               expiry_date: formVencimiento,
               category: formCategoria || null,
               productId: editingProductId || undefined,
+              branch: activeBranch,
             }),
           });
           if (!res.ok) throw new Error("Error al crear");
         }
       } else if (dialogKind === "vencidos") {
         if (editingId) {
-          const res = await fetch(`${base}/vencidos/${editingId}`, {
+          const res = await fetch(`${base}/vencidos/${editingId}?branch=${activeBranch}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -183,6 +188,7 @@ export function TrackerTables({
               articulo: formArticulo.trim() || null,
               expiry_date: formVencimiento || null,
               stock: formCant,
+              branch: activeBranch,
             }),
           });
           if (!res.ok) throw new Error("Error al actualizar");
@@ -196,19 +202,21 @@ export function TrackerTables({
               expiry_date: formVencimiento || null,
               stock: formCant,
               productId: editingProductId || undefined,
+              branch: activeBranch,
             }),
           });
           if (!res.ok) throw new Error("Error al crear");
         }
       } else {
         if (editingId) {
-          const res = await fetch(`${base}/fallados/${editingId}`, {
+          const res = await fetch(`${base}/fallados/${editingId}?branch=${activeBranch}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               productName: formProducto.trim(),
               articulo: formArticulo.trim() || null,
               stock: formCant,
+              branch: activeBranch,
             }),
           });
           if (!res.ok) throw new Error("Error al actualizar");
@@ -221,6 +229,7 @@ export function TrackerTables({
               articulo: formArticulo.trim() || null,
               stock: formCant,
               productId: editingProductId || undefined,
+              branch: activeBranch,
             }),
           });
           if (!res.ok) throw new Error("Error al crear");
@@ -256,7 +265,7 @@ export function TrackerTables({
     const { kind, id, ids } = deleteConfirm;
     const toDelete = ids && ids.length > 0 ? ids : id ? [id] : [];
     for (const idToDelete of toDelete) {
-      const res = await fetch(`/api/${kind}/${idToDelete}`, { method: "DELETE" });
+      const res = await fetch(`/api/${kind}/${idToDelete}?branch=${activeBranch}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Error al eliminar");
     }
     toast.success(toDelete.length > 1 ? `${toDelete.length} eliminados` : "Eliminado");
@@ -320,11 +329,14 @@ export function TrackerTables({
           expiry_date: moveToVencidosRow.vencimiento ? toDateOnly(moveToVencidosRow.vencimiento) : null,
           stock: moveToVencidosStock,
           productId: moveToVencidosRow.product_id || undefined,
+          branch: activeBranch,
         }),
       });
       if (!res.ok) throw new Error("Error al crear en vencidos");
       if (moveToVencidosRow.id) {
-        const delRes = await fetch(`${base}/vencimientos/${moveToVencidosRow.id}`, { method: "DELETE" });
+        const delRes = await fetch(`${base}/vencimientos/${moveToVencidosRow.id}?branch=${activeBranch}`, {
+          method: "DELETE",
+        });
         if (!delRes.ok) throw new Error("Error al eliminar de vencimientos");
       }
       toast.success("Pasado a vencidos");

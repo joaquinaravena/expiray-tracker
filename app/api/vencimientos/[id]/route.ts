@@ -6,14 +6,24 @@ import {
   updateProductArticulo,
   updateProductName,
 } from "@/lib/queries";
+import { DEFAULT_BRANCH, normalizeBranchCode } from "@/lib/branches";
+
+function getBranchFromRequest(request: NextRequest) {
+  const branchParam = request.nextUrl.searchParams.get("branch");
+  return branchParam ? normalizeBranchCode(branchParam) : DEFAULT_BRANCH;
+}
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const branch = getBranchFromRequest(_request);
+    if (!branch) {
+      return NextResponse.json({ error: "branch inválido. Usa don-bosco o alem" }, { status: 400 });
+    }
     const { id } = await params;
-    const row = await getVencimientoById(id);
+    const row = await getVencimientoById(id, branch);
     if (!row) return NextResponse.json(null, { status: 404 });
     return NextResponse.json(row);
   } catch (err) {
@@ -27,6 +37,10 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const branch = getBranchFromRequest(request);
+    if (!branch) {
+      return NextResponse.json({ error: "branch inválido. Usa don-bosco o alem" }, { status: 400 });
+    }
     const { id } = await params;
     const body = await request.json();
     const { productName, expiry_date, category, articulo } = body as {
@@ -35,7 +49,7 @@ export async function PATCH(
       category?: string | null;
       articulo?: string | null;
     };
-    const existing = await getVencimientoById(id);
+    const existing = await getVencimientoById(id, branch);
     if (!existing) return NextResponse.json(null, { status: 404 });
     if (existing.product_id) {
       if (productName !== undefined && productName.trim()) {
@@ -65,7 +79,13 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const branch = getBranchFromRequest(_request);
+    if (!branch) {
+      return NextResponse.json({ error: "branch inválido. Usa don-bosco o alem" }, { status: 400 });
+    }
     const { id } = await params;
+    const existing = await getVencimientoById(id, branch);
+    if (!existing) return NextResponse.json(null, { status: 404 });
     const ok = await deleteVencimiento(id);
     if (!ok) return NextResponse.json(null, { status: 404 });
     return new NextResponse(null, { status: 204 });

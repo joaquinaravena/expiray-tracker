@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllFallados, createFallado } from "@/lib/queries";
+import { DEFAULT_BRANCH, normalizeBranchCode } from "@/lib/branches";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const rows = await getAllFallados();
+    const branchParam = request.nextUrl.searchParams.get("branch");
+    const branch = branchParam ? normalizeBranchCode(branchParam) : DEFAULT_BRANCH;
+    if (!branch) {
+      return NextResponse.json({ error: "branch inválido. Usa don-bosco o alem" }, { status: 400 });
+    }
+    const rows = await getAllFallados(branch);
     return NextResponse.json(rows);
   } catch (err) {
     console.error("[GET /api/fallados]", err);
@@ -14,12 +20,17 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { productName, articulo, stock, productId } = body as {
+    const { productName, articulo, stock, productId, branch } = body as {
       productName: string;
       articulo?: string | null;
       stock?: number;
       productId?: string | null;
+      branch?: string;
     };
+    const normalizedBranch = normalizeBranchCode(branch ?? DEFAULT_BRANCH);
+    if (!normalizedBranch) {
+      return NextResponse.json({ error: "branch inválido. Usa don-bosco o alem" }, { status: 400 });
+    }
     if (!productName?.trim()) {
       return NextResponse.json(
         { error: "productName es requerido" },
@@ -31,6 +42,7 @@ export async function POST(request: NextRequest) {
       articulo: articulo != null ? String(articulo).trim() || null : null,
       stock: stock ?? 0,
       productId: productId?.trim() || undefined,
+      branchCode: normalizedBranch,
     });
     return NextResponse.json(row, { status: 201 });
   } catch (err) {

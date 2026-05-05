@@ -1,11 +1,11 @@
 # Vencimientos
 
-App Next.js para seguir vencimientos de productos **sin base de datos**. Los datos viven en un JSON estático. Incluye cron en Vercel que envía alertas por email (Resend) cuando un producto vence en 3 días o menos.
+App Next.js para seguir vencimientos de productos con **Neon PostgreSQL**. Incluye cron en Vercel que envía alertas por email (Resend) cuando un producto vence en 3 días o menos.
 
 ## Stack
 
 - **Next.js** (App Router), **TypeScript**, **Tailwind CSS**, **shadcn/ui**, **Resend**, **Vercel Cron**
-- Datos: `public/data/tracker.json` con tres listas: `vencimientos`, `vencidos`, `fallados`.
+- Base de datos: **Neon PostgreSQL** (`DATABASE_URL`).
 
 ## Requisitos
 
@@ -23,6 +23,7 @@ Copia `.env.example` a `.env` y rellena:
 | `CRON_SECRET`    | (Opcional) Secreto para proteger `/api/cron`; en Vercel se envía como `Authorization: Bearer <CRON_SECRET>`. |
 | `VAPID_PUBLIC_KEY` | (Opcional) Clave pública VAPID para Web Push. Sin ella no se envían notificaciones push. |
 | `VAPID_PRIVATE_KEY` | (Opcional) Clave privada VAPID. Generar par con `npx web-push generate-vapid-keys`. |
+| `DATABASE_URL` | URL de conexión a Neon PostgreSQL (requerida). |
 
 ## Cómo convertir Excel a JSON
 
@@ -67,6 +68,7 @@ El cron es un `GET /api/cron`. Puedes dispararlo a mano sin cambiar el timer:
 2. Revisa la respuesta JSON (`sent`, `total`, `pushSent`) y los logs `[cron]` en la terminal del dev server. Los emails se envían a `TO_EMAIL` (Resend debe tener esa dirección en la audiencia si estás en plan gratis). Si configuraste `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY`, el cron también envía una notificación push (un resumen) a cada navegador que haya hecho clic en **Activar notificaciones**; esa notificación llega aunque la app esté cerrada.
 
 - **Cargar Excel**: sube un `.xlsx` con las 3 secciones; se muestra el resultado y los datos se guardan en la base de datos.
+- **Sucursales**: selector fijo entre `Don Bosco` y `Alem`. Son las únicas dos opciones soportadas.
 - **Activar notificaciones**: el botón pide permiso al navegador y guarda la suscripción para Web Push. El cron diario enviará una notificación de escritorio (resumen de productos por vencer) aunque la pestaña esté cerrada; hace falta configurar `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY` (generar con `npx web-push generate-vapid-keys`).
 
 ## Deploy en Vercel
@@ -77,17 +79,18 @@ El cron es un `GET /api/cron`. Puedes dispararlo a mano sin cambiar el timer:
    - `TO_EMAIL`
    - (Opcional) `CRON_SECRET` (y configúralo también en la ruta `/api/cron` si la proteges con este secreto).
    - (Opcional) `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY` para notificaciones push (generar con `npx web-push generate-vapid-keys`).
-3. El **cron** está definido en `vercel.json`: se ejecuta a las **07:00 UTC** y llama a `GET /api/cron`. Lee `public/data/tracker.json`, filtra ítems de `vencimientos` que vencen en 3 días o menos, y envía un email por cada uno vía Resend.
+3. El **cron** está definido en `vercel.json`: se ejecuta a las **07:00 UTC** y llama a `GET /api/cron`. Lee `vencimientos` desde la base de datos, filtra ítems que vencen en 3 días o menos, y envía un email por cada uno vía Resend.
 
-## Sin base de datos ni auth
+## Base de datos y sucursales
 
-- No hay base de datos: la fuente de verdad es `public/data/tracker.json`.
-- Para actualizar en producción: sube el Excel en la app, descarga `tracker.json`, reemplázalo en el repo y redespliega (o usa `node convert.js` localmente).
+- La fuente de verdad es Neon PostgreSQL.
+- Las sucursales disponibles son solo `don-bosco` y `alem`.
+- El filtro por sucursal via API se hace con `?branch=don-bosco|alem` (default: `don-bosco`).
 
 ## Estructura relevante
 
 - `app/page.tsx` – Dashboard con pestañas y botón Cargar Excel.
-- `app/api/cron/route.ts` – GET; lee `tracker.json`, filtra `vencimientos` por vencimiento ≤ 3 días, envía emails Resend.
+- `app/api/cron/route.ts` – GET; lee DB, filtra `vencimientos` por vencimiento ≤ 3 días, envía emails Resend.
 - `app/api/import/route.ts` – POST; recibe Excel, parsea las 3 secciones, devuelve `{ data: TrackerData }`.
 - `lib/utils.ts` – Tipos `Vencimiento`, `Vencido`, `Fallado`, `TrackerData`; helpers `formatExpiryDate`, `getDaysRemaining`.
 - `components/TrackerTables.tsx` – Tres tablas en pestañas (Vencimientos, Vencidos, Fallados).

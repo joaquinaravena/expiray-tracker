@@ -5,9 +5,11 @@ import { TrackerTables } from "@/components/TrackerTables";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog } from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import type { TrackerData } from "@/lib/utils";
 import { FileSpreadsheet, Loader2 } from "lucide-react";
+import type { BranchCode } from "@/lib/branches";
 
 const EMPTY_TRACKER: TrackerData = {
   vencimientos: [],
@@ -25,11 +27,12 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 }
 
 export default function Home() {
+  const [activeBranch, setActiveBranch] = useState<BranchCode>("don-bosco");
   const [data, setData] = useState<TrackerData>(EMPTY_TRACKER);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [importedData, setImportedData] = useState<TrackerData | null>(null);
-  const onDataChange = () => fetchTracker();
+  const onDataChange = () => fetchTracker(activeBranch);
   const [importing, setImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [pushSupported, setPushSupported] = useState(false);
@@ -68,12 +71,12 @@ export default function Home() {
     checkSubscription();
   }, []);
 
-  const fetchTracker = async () => {
+  const fetchTracker = async (branch: BranchCode) => {
     setLoading(true);
     setError(null);
     setImportedData(null);
     try {
-      const res = await fetch("/api/tracker");
+      const res = await fetch(`/api/tracker?branch=${branch}`);
       if (!res.ok) throw new Error("Error al cargar datos");
       const json: TrackerData = await res.json();
       if (!json || typeof json !== "object") throw new Error("Formato inválido");
@@ -92,8 +95,8 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchTracker();
-  }, []);
+    fetchTracker(activeBranch);
+  }, [activeBranch]);
 
   const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -103,6 +106,7 @@ export default function Home() {
     try {
       const formData = new FormData();
       formData.set("file", file);
+      formData.set("branch", activeBranch);
       const res = await fetch("/api/import", { method: "POST", body: formData });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Error al importar");
@@ -192,6 +196,28 @@ export default function Home() {
               <CardDescription>
                 Vencimientos, vencidos y fallados. Días en rojo: menos de 3 días. Sube un Excel con las 3 secciones.
               </CardDescription>
+              <div className="mt-3">
+                <Tabs
+                  value={activeBranch}
+                  onValueChange={(value) => setActiveBranch(value as BranchCode)}
+                  className="w-full sm:w-auto"
+                >
+                  <TabsList className="grid w-full grid-cols-2 sm:w-[260px]">
+                    <TabsTrigger
+                      value="don-bosco"
+                      className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-700 dark:data-[state=active]:bg-blue-900/40 dark:data-[state=active]:text-blue-300"
+                    >
+                      Don Bosco
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="alem"
+                      className="data-[state=active]:bg-emerald-100 data-[state=active]:text-emerald-700 dark:data-[state=active]:bg-emerald-900/40 dark:data-[state=active]:text-emerald-300"
+                    >
+                      Alem
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
             </div>
             <div className="flex flex-wrap gap-2">
               <Button
@@ -245,7 +271,7 @@ export default function Home() {
                     <Loader2 className="size-8 animate-spin text-muted-foreground" />
                   </div>
                 )}
-                <TrackerTables data={data} onDataChange={onDataChange} />
+                <TrackerTables data={data} activeBranch={activeBranch} onDataChange={onDataChange} />
               </div>
             )}
           </CardContent>
