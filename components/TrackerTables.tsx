@@ -378,7 +378,7 @@ export function TrackerTables({
         variant="destructive"
         onConfirm={handleDeleteConfirm}
       />
-      <Tabs defaultValue="vencimientos" className="w-full">
+      <Tabs defaultValue="vencimientos" className="w-full min-w-0">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="vencimientos">Vencimientos</TabsTrigger>
           <TabsTrigger value="vencidos">Vencidos</TabsTrigger>
@@ -408,7 +408,7 @@ export function TrackerTables({
               </Button>
             )}
           </div>
-          <div className="w-full rounded-md border">
+          <div className="w-full min-w-0 overflow-x-auto rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -546,7 +546,7 @@ export function TrackerTables({
               </Button>
             )}
           </div>
-          <div className="w-full rounded-md border">
+          <div className="w-full min-w-0 overflow-x-auto rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -652,7 +652,7 @@ export function TrackerTables({
               </Button>
             )}
           </div>
-          <div className="w-full rounded-md border">
+          <div className="w-full min-w-0 overflow-x-auto rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
