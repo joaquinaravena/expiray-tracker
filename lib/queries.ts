@@ -241,7 +241,7 @@ export async function getAllVencidos(branchCode: BranchCode = DEFAULT_BRANCH): P
     JOIN branches b ON b.id = v.branch_id
     JOIN products p ON p.id = v.product_id
     WHERE v.branch_id = ${branch.id}
-    ORDER BY p.name ASC
+    ORDER BY v.expiry_date DESC NULLS LAST, p.name ASC
   `;
   return (rows as (VencidoRow & { product_name: string; product_articulo?: string | null; branch_code?: string })[]).map(mapVencidoRow);
 }
